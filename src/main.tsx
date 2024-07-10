@@ -49,7 +49,7 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
             localStorage.setItem('warning', values.warning.id);
             localStorage.setItem('resultType', values.resultType);
             console.log(values.warning);
-            if (values.table == null || values.field == null || values.province == null || values.date == null) {
+            if (values.table == null || values.select == null || values.province == null || values.date == null) {
                 uiBuilder.message.error(t('NoData'), 5)
             } else {
                 //展示加载页面
@@ -126,8 +126,8 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
                                         else {
                                             //修改天气内容
                                             if (values.resultType == 'weatherEmoji' || values.resultType == 'weatherEmojiAndWarning') {
-                                                values.field.setValue(record, resources.icons[response.data["daily"][diffDays]["iconDay"]] + '/' + resources.icons[response.data["daily"][diffDays]["iconNight"]]);
-                                            }else {
+                                                values.field.setValue(record, resources.icons_hf[response.data["daily"][diffDays]["iconDay"]] + '/' + resources.icons_hf[response.data["daily"][diffDays]["iconNight"]]);
+                                            } else {
                                                 values.field.setValue(record, response.data["daily"][diffDays]["textDay"] + '/' + response.data["daily"][diffDays]["textNight"]);
                                             }
                                         }
@@ -165,19 +165,44 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
                                     })
                                 }
                             } else if (serviceContent == 2) {
-                                axios.get('https://api.seniverse.com/v3/weather/daily.json?key=' + tokenKey + '&location=' + lat + ':' + lon).then(response => {
-                                    //修改天气内容
-                                    values.field.setValue(record, response.data["results"][0]["daily"][diffDays]["text_day"]);
-                                }).catch(function (error) {
-                                    if (error.response.status == 403) {
-                                        uiBuilder.message.error(t('InvalidRequest'), 5)
-                                        return;
-                                    }
-                                    else if (error.response.status == 404) {
-                                        uiBuilder.message.error(t('NoData'), 5)
-                                        return;
-                                    }
-                                });
+                                if (values.resultType == 'weather' || values.resultType == 'weatherEmoji' || values.resultType == 'weatherAndWarning' || values.resultType == 'weatherEmojiAndWarning') {
+                                    axios.get('https://api.seniverse.com/v3/weather/daily.json?key=' + tokenKey + '&location=' + lat + ':' + lon).then(response => {
+                                        //修改天气内容
+                                        if (values.resultType == 'weatherEmoji' || values.resultType == 'weatherEmojiAndWarning') {
+                                            values.field.setValue(record, resources.icons_xz[response.data["results"][0]["daily"][diffDays]["code_day"]] + '/' + resources.icons_xz[response.data["results"][0]["daily"][diffDays]["code_night"]]);
+                                        } else {
+                                            values.field.setValue(record, response.data["results"][0]["daily"][diffDays]["text_day"] + '/' +response.data["results"][0]["daily"][diffDays]["text_night"]);
+                                        }
+                                    }).catch(function (error) {
+                                        if (error.response.status == 403) {
+                                            uiBuilder.message.error(t('InvalidRequest'), 5)
+                                            return;
+                                        }
+                                        else if (error.response.status == 404) {
+                                            uiBuilder.message.error(t('NoData'), 5)
+                                            return;
+                                        }
+                                    });
+                                }
+                                if (values.resultType == 'warning' || values.resultType == 'weatherAndWarning' || values.resultType == 'weatherEmojiAndWarning') {
+                                    axios.get('https://api.seniverse.com/v3/weather/alarm.json?key=' + tokenKey + '&location=' + lat + ':' + lon).then(response => {
+                                        //修改天气内容
+                                        if (response.data && Array.isArray(response.results[0].alarms) && response.results[0].alarms > 0) {
+                                            values.warning.setValue(record, response.results[0].alarms[0].title);
+                                        } else {
+                                            values.warning.setValue(record, '无预警');
+                                        }
+                                    }).catch(function (error) {
+                                        if (error.response.status == 403) {
+                                            uiBuilder.message.error(t('InvalidRequest'), 5)
+                                            return;
+                                        }
+                                        else if (error.response.status == 404) {
+                                            uiBuilder.message.error(t('NoData'), 5)
+                                            return;
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
