@@ -1,0 +1,48 @@
+.dark-mode {
+    background-color: #121212;
+}
+
+.dark-mode .ant-form-item .ant-form-item-label>label {
+    color: rgba(255, 255, 255, .88);
+}
+
+.dark-mode .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #555;
+}
+
+.dark-mode .ant-select-single .ant-select-selector {
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.dark-mode .ant-select {
+    color: rgba(255, 255, 255, 0.88);
+}
+.dark-mode .ant-select-single.ant-select-open .ant-select-selection-item{
+    color: rgba(255, 255, 255, 0.5);
+}
+.dark-mode .ant-select-dropdown{
+    background-color: rgba(0, 0, 0, 1);
+    color: rgba(255, 255, 255, 0.88);
+    border: 1px solid #555;
+}
+.dark-mode .ant-select-dropdown .ant-select-item {
+    color: rgba(255, 255, 255, 0.88);
+}
+.dark-mode .ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled){
+    background-color: #1677ff;
+    color: white;
+}
+.dark-mode .ant-select .ant-select-arrow{
+    color: rgba(255, 255, 255, 0.25);
+}
+.dark-mode .ant-input {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #555;
+    color: rgba(255, 255, 255, .88);
+}
+.dark-mode .ant-btn-default{
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid #555;
+    color: rgba(255, 255, 255, .88);
+}

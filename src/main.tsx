@@ -214,6 +214,8 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
             }
         }
     });
+
+
     //发生改变时刷新
     bitable.base.onTableAdd((event) => {
         uiBuilder.reload()
