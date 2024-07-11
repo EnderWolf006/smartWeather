@@ -3,6 +3,7 @@ import { bitable, UIBuilder, FieldType } from "@lark-base-open/js-sdk";
 import axios from 'axios';
 import { UI } from "blockly/core/events/ulimitDayls.js";
 import resources from './i18n/resources';
+
 export default async function main(uiBuilder: UIBuilder, { t }) {
     //生成页面布局
     uiBuilder.form((form) => ({
@@ -21,13 +22,15 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
             }),
             form.input('key', { label: t('AppKey'), defaultValue: localStorage.getItem('key') ?? null }),
             form.select('resultType', {
-                label: t('ResultType'), options: [
-                    { label: '天气', value: 'weather' },
-                    { label: '气象预警', value: 'warning' },
-                    { label: '天气(emoji)', value: 'weatherEmoji' },
-                    { label: '天气+气象预警', value: 'weatherAndWarning' },
-                    { label: '天气(emoji)+气象预警', value: 'weatherEmojiAndWarning' },
-                ], defaultValue: localStorage.getItem('resultType') ?? 'weatherAndWarning',
+                label: t('ResultType'), 
+                options: [
+                    { label: t('Weather'), value: 'weather' },
+                    { label: t('WeatherWarning'), value: 'warning' },
+                    { label: t('WeatherEmoji'), value: 'weatherEmoji' },
+                    { label: t('WeatherAndWarning'), value: 'weatherAndWarning' },
+                    { label: t('WeatherEmojiAndWarning'), value: 'weatherEmojiAndWarning' },
+                ],
+                defaultValue: localStorage.getItem('resultType') ?? 'weatherAndWarning',
             }),
             form.tableSelect('table', { label: t('ChooseTable'), value: localStorage.getItem('table') ?? null }),
             form.fieldSelect('province', { label: t('InputProvince'), sourceTable: 'table', filterByTypes: [FieldType.Location], defaultValue: localStorage.getItem('province') ?? null }),
@@ -105,7 +108,7 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
                                 var provincecellValue = await values.province.getValue(record);
                                 if (values.resultType == 'weather' || values.resultType == 'weatherEmoji' || values.resultType == 'weatherAndWarning' || values.resultType == 'weatherEmojiAndWarning') {
                                     //发送请求
-                                    axios.get('https://' + serviceVersion + '.qweather.com/v7/weather/7d?location=' + provincecellValue["location"] + '&key=' + tokenKey).then(response => {
+                                    axios.get('https://' + serviceVersion + '.qweather.com/v7/weather/7d?lang=' + t('hf-lang') + '&location=' + provincecellValue["location"] + '&key=' + tokenKey).then(response => {
                                         //判断返回状态码
                                         if (response.data["code"] == 400) {
                                             uiBuilder.message.error(t('InvalidRequest'), 5)
@@ -134,7 +137,7 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
                                     })
                                 }
                                 if (values.resultType == 'warning' || values.resultType == 'weatherAndWarning' || values.resultType == 'weatherEmojiAndWarning') {
-                                    axios.get('https://' + serviceVersion + '.qweather.com/v7/warning/now?location=' + provincecellValue["location"] + '&key=' + tokenKey).then(response => {
+                                    axios.get('https://' + serviceVersion + '.qweather.com/v7/warning/now?lang=' + t('hf-lang') + '&location=' + provincecellValue["location"] + '&key=' + tokenKey).then(response => {
                                         //判断返回状态码
                                         if (response.data["code"] == 400) {
                                             uiBuilder.message.error(t('InvalidRequest'), 5)
@@ -166,7 +169,7 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
                                 }
                             } else if (serviceContent == 2) {
                                 if (values.resultType == 'weather' || values.resultType == 'weatherEmoji' || values.resultType == 'weatherAndWarning' || values.resultType == 'weatherEmojiAndWarning') {
-                                    axios.get('https://api.seniverse.com/v3/weather/daily.json?key=' + tokenKey + '&location=' + lat + ':' + lon).then(response => {
+                                    axios.get('https://api.seniverse.com/v3/weather/daily.json?language=' + t('xz-lang') + '&key=' + tokenKey + '&location=' + lat + ':' + lon).then(response => {
                                         //修改天气内容
                                         if (values.resultType == 'weatherEmoji' || values.resultType == 'weatherEmojiAndWarning') {
                                             values.field.setValue(record, resources.icons_xz[response.data["results"][0]["daily"][diffDays]["code_day"]] + '/' + resources.icons_xz[response.data["results"][0]["daily"][diffDays]["code_night"]]);
@@ -185,7 +188,7 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
                                     });
                                 }
                                 if (values.resultType == 'warning' || values.resultType == 'weatherAndWarning' || values.resultType == 'weatherEmojiAndWarning') {
-                                    axios.get('https://api.seniverse.com/v3/weather/alarm.json?key=' + tokenKey + '&location=' + lat + ':' + lon).then(response => {
+                                    axios.get('https://api.seniverse.com/v3/weather/alarm.json?anguage=' + t('xz-lang') + '&key=' + tokenKey + '&location=' + lat + ':' + lon).then(response => {
                                         //修改天气内容
                                         if (response.data && Array.isArray(response.results[0].alarms) && response.results[0].alarms > 0) {
                                             values.warning.setValue(record, response.results[0].alarms[0].title);

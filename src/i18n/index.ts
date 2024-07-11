@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { bitable } from '@lark-base-open/js-sdk';
-import resources from './resources';
+import resources from './translations';
 
 i18n
   .use(LanguageDetector)
@@ -15,8 +15,10 @@ i18n
     },
   });
 
+
 bitable.bridge.getLanguage().then((lng) => {
   if (i18n.language !== lng) {
+    console.log()
     i18n.changeLanguage(lng);
   }
 });
