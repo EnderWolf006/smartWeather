@@ -57,7 +57,15 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
             } else {
                 //展示加载页面
                 uiBuilder.showLoading(t('Loading'));
-                const recordList = await table.getRecordList();
+                let recordIdData;
+                let token;
+                do {
+                    recordIdData = await table.getRecordListByPage(token ? {
+                        pageToken: token
+                    } : {});
+                    
+                    token = recordIdData.pageToken
+                    const recordList = recordIdData.records
                 for (const record of recordList) {
                     //计算日期差值
                     var provincecellValue = await values.province.getValue(record);
@@ -209,8 +217,10 @@ export default async function main(uiBuilder: UIBuilder, { t }) {
                             }
                         }
                     }
+
                     await uiBuilder.hideLoading();
                 }
+            } while (recordIdData.hasMore);
             }
         }
     });
